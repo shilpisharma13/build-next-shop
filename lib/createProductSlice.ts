@@ -1,23 +1,21 @@
 import { StateCreator } from 'zustand'
 
 export interface Variant {
-  edges: {
-    node: {
-      id: number
-      title: string
-      price: {
-        amount: string
-      }
-      image: {
-        url: string
-        altText: string
-      }
-      selectedOptions: {
-        name: string
-        values: string
-      }[]
+  node: {
+    id: string
+    title: string
+    price: {
+      amount: string
     }
-  }[]
+    image: {
+      url: string
+      altText: string
+    }
+    selectedOptions: {
+      name: string
+      value: string
+    }[]
+  }
 }
 
 export interface Product {
@@ -40,13 +38,14 @@ export interface Product {
       }
     }[]
   }
-  options?: {
+  options: {
     name: string
     values: string[]
   }[]
-  variants?: Variant
+  variants: {
+    edges: Variant[]
+  }
 }
-
 export interface ProductSlice {
   node: Product
 }

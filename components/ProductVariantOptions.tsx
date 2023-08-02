@@ -1,10 +1,17 @@
+import { Options } from './ProductForm'
 
+interface Props {
+  name: string
+  values: string[]
+  selectedOptions: Options
+  setOptions: (name: string, value: string) => void
+}
 const ProductVariantOptions = ({
   name,
   values,
   selectedOptions,
   setOptions,
-}) => {
+}: Props) => {
   return (
     <div className='mt-10'>
       <h3 className='text-sm font-medium text-gray-900 pb-2'>{name}</h3>

@@ -1,19 +1,13 @@
 import Sort from '@/components/Sort'
 import {
-  getCategoriesList,
-  getCollectionsList,
   getProducts,
 } from '../../utils/shopify'
-import ProductCard from '@/components/ProductCard'
 import SidebarFilter from '@/components/SidebarFilter'
-import StoreInitializer from '@/components/StoreInitializer'
-import { useStore } from 'zustand'
-import { Product, ProductSlice } from '@/lib/createProductSlice'
+import Products from '@/components/Products'
 
 export default async function Page() {
   const response = await getProducts()
-  const allProducts: [] = response.products.edges ? response.products.edges : []
-  console.log(allProducts)
+  const initialData: [] = response.products.edges ? response.products.edges : []
 
   // const collectionsResponse = await getCollectionsList()
   // const collectionsList = collectionsResponse.collections.edges
@@ -22,8 +16,6 @@ export default async function Page() {
   // const categoriesList = new Set(
   //   categoriesResponse.products.nodes.map((item) => item.productType)
   // )
-
-  // useStore.setState()
 
   return (
     <div className='bg-white'>
@@ -37,11 +29,9 @@ export default async function Page() {
             <SidebarFilter />
           </div>
           <div className='col-span-4'>
-            <div className='grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-              {allProducts.map((product : ProductSlice) => (
-                <ProductCard key={product.node.id} product={product} />
-              ))}
-            </div>
+           
+              <Products products={initialData} />
+            
           </div>
         </div>
       </main>

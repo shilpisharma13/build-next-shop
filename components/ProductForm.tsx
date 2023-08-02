@@ -4,19 +4,49 @@ import { useEffect, useState } from 'react'
 import ProductVariantOptions from './ProductVariantOptions'
 import { useShopContext } from '@/context/shopContext'
 import { useStore } from '@/context/store'
+import { Product, Variant } from '@/lib/createProductSlice'
 
-const ProductForm = ({ product, productInventory }) => {
-  console.log(product)
+interface Props {
+  product: Product
+  productInventory: {
+    product: {
+      variants: {
+        edges: {
+          node: {
+            id: string
+            availableForSale: boolean
+          }
+        }[]
+      }
+    }
+  }
+}
+
+export interface Options {
+  [key: string]: string
+}
+
+export interface VariantOptions {
+  id: string
+  image: string
+  options: Options
+  variantTitle: string
+  variantPrice: string
+  variantQuantity: number
+  handle: string
+  title: string
+}
+const ProductForm = ({ product, productInventory }: Props) => {
+  console.log(productInventory)
   // const { addToCart } = useShopContext()
   const { addToCart } = useStore((state) => ({
     addToCart: state.addToCart,
   }))
-  const allVariantOptions = product.variants.edges.map((variant) => {
-    const allOptions = {}
-
-    variant.node.selectedOptions.map((item) => {
-      allOptions[item.name] = item.value
-    })
+  const allVariantOptions = product.variants.edges.map((variant: Variant) => {
+    const allOptions: Options = {}
+    variant.node.selectedOptions.map(
+      (item) => (allOptions[item.name] = item.value)
+    )
 
     return {
       id: variant.node.id,
@@ -29,8 +59,8 @@ const ProductForm = ({ product, productInventory }) => {
       title: product.title,
     }
   })
-
-  const defaultValues = {}
+  console.log(product.options)
+  const defaultValues: Options = {}
   product.options.map((item) => {
     defaultValues[item.name] = item.values[0]
   })
@@ -39,14 +69,16 @@ const ProductForm = ({ product, productInventory }) => {
   const [selectedOptions, setSelectedOptions] = useState(defaultValues)
   const [inStock, setInStock] = useState(true)
 
-  const setOptions = (name, value) => {
+  const setOptions = (name: string, value: string) => {
     setSelectedOptions((prevState) => {
       return { ...prevState, [name]: value }
     })
+
     const selection = {
       ...selectedOptions,
       [name]: value,
     }
+
     allVariantOptions.map((item) => {
       if (JSON.stringify(item.options) === JSON.stringify(selection)) {
         setSelectedVariant(item)
@@ -79,7 +111,6 @@ const ProductForm = ({ product, productInventory }) => {
             name={name}
             values={values}
             selectedOptions={selectedOptions}
-            inStock={inStock}
             setOptions={setOptions}
           />
         ))}

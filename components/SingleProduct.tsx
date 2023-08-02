@@ -4,17 +4,17 @@ import ProductForm from './ProductForm'
 import { getVariantInventory } from '@/utils/shopify'
 import useSWR from 'swr'
 import { Product } from '@/lib/createProductSlice'
+import { useQuery } from '@tanstack/react-query'
 
 interface Props {
   product: Product
 }
 const SingleProduct = ({ product }: Props) => {
-  const { data: productInventory, error } = useSWR(
-    product.id,
-    (id: string) => getVariantInventory(id),
+  const { data: productInventory } = useQuery({
+    queryKey: ['products', 'product', product.id],
+    queryFn: async ({ queryKey }) => await getVariantInventory(queryKey[2]),
+  })
 
-    { errorRetryCount: 3 }
-  )
   const { title, images, description, priceRange } = product
 
   return (
@@ -24,7 +24,7 @@ const SingleProduct = ({ product }: Props) => {
         <div className='grid grid-cols-2'>
           <div>
             <Image
-              src={images.edges[0].node.url}
+              src={images.edges[0].node.url || ''}
               alt={images.edges[0].node.altText || ''}
               width={500}
               height={200}
@@ -35,7 +35,7 @@ const SingleProduct = ({ product }: Props) => {
                 return (
                   <Image
                     key={index}
-                    src={image.node.url}
+                    src={image.node.url || ''}
                     alt={image.node.altText || ''}
                     width={50}
                     height={20}
