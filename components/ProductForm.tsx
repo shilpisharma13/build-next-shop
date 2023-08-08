@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import ProductVariantOptions from './ProductVariantOptions'
 import { useShopContext } from '@/context/shopContext'
-import { useStore } from '@/context/store'
+import { useCartStore } from '@/context/useCartStore'
 import { Product, Variant } from '@/lib/createProductSlice'
 
 interface Props {
@@ -37,9 +37,8 @@ export interface VariantOptions {
   title: string
 }
 const ProductForm = ({ product, productInventory }: Props) => {
-  console.log(productInventory)
   // const { addToCart } = useShopContext()
-  const { addToCart } = useStore((state) => ({
+  const { addToCart } = useCartStore((state) => ({
     addToCart: state.addToCart,
   }))
   const allVariantOptions = product.variants.edges.map((variant: Variant) => {
@@ -59,7 +58,7 @@ const ProductForm = ({ product, productInventory }: Props) => {
       title: product.title,
     }
   })
-  console.log(product.options)
+
   const defaultValues: Options = {}
   product.options.map((item) => {
     defaultValues[item.name] = item.values[0]

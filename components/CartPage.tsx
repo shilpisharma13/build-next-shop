@@ -5,15 +5,25 @@ import Image from 'next/image'
 import { TrashIcon, UsersIcon } from '@heroicons/react/24/outline'
 import { getCart } from '@/utils/shopify'
 import Link from 'next/link'
+import { useCartStore } from '@/context/useCartStore'
+import useStore from '@/context/useStore'
 
 export const CartPage = () => {
-  const { cartLoading, checkoutUrl, cartId, cart, deleteCartItem } =
-    useShopContext()
+  const cart = useStore(useCartStore, (state) => state.cart)
+  const deleteCartItem = useStore(useCartStore, (state) => state.deleteCartItem)
+  const updateItemQuantity = useStore(
+    useCartStore,
+    (state) => state.updateItemQuantity
+  )
+  const clearCart = useStore(useCartStore, (state) => state.clearCart)
 
   let cartTotal = 0
   let totalQuantity = 0
-  cart.map((item) => (cartTotal += item?.variantPrice * item?.variantQuantity))
-  cart.map((item) => (totalQuantity += item.variantQuantity))
+  cart?.map(
+    (item) =>
+      (cartTotal += parseInt(item?.variantPrice) * item?.variantQuantity)
+  )
+  cart?.map((item) => (totalQuantity += item.variantQuantity))
 
   return (
     <div className='bg-white flex px-4 flex-grow justify-between mt-10'>
@@ -24,69 +34,75 @@ export const CartPage = () => {
             {totalQuantity} items in cart
           </h2>
         </div>
-        {cart.length> 0? cart.map((product) => {
-          return (
-            <div
-              key={product.id}
-              className='flex justify-between hover:bg-gray-100  px-3 py-5'
-            >
-              <div className='flex basis-3/5'>
-                <div className='flex'>
-                  <div className='relative flex-shrink-0 w-24 h-20 overflow-hidden border border-gray-200 rounded-md'>
-                    <Image
-                      src={product.image}
-                      alt={product.title}
-                      layout='fill'
-                      objectFit='cover'
-                    />
+        {cart.length > 0
+          ? cart.map((product) => {
+              return (
+                <div
+                  key={product.id}
+                  className='flex justify-between hover:bg-gray-100  px-3 py-5'
+                >
+                  <div className='flex basis-3/5'>
+                    <div className='flex'>
+                      <div className='relative flex-shrink-0 w-24 h-20 overflow-hidden border border-gray-200 rounded-md'>
+                        <Image
+                          src={product.image}
+                          alt={product.title}
+                          layout='fill'
+                          objectFit='cover'
+                        />
+                      </div>
+                      <div className='flex flex-col  ml-4'>
+                        <Link
+                          className='font-bold text-sm'
+                          href={`/products/${product.handle}`}
+                        >
+                          {product.title}
+                        </Link>
+                        <span className='text-gray-500 text-m'>
+                          {product.variantTitle}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className='flex flex-col  ml-4'>
-                    <Link
-                      className='font-bold text-sm'
-                      href={`/products/${product.handle}`}
-                    >
-                      {product.title}
-                    </Link>
-                    <span className='text-gray-500 text-m'>
-                      {product.variantTitle}
-                    </span>
+                  <div className='grid grid-cols-3'>
+                    <div>
+                      <button
+                        className='px-2'
+                        onClick={() =>
+                          updateItemQuantity(product.id, 'decrease')
+                        }
+                        // disabled={cartLoading}
+                      >
+                        -
+                      </button>
+                    </div>
+                    <div>
+                      <span className='px-2 border border-gray-200'>
+                        {product.variantQuantity}
+                      </span>
+                    </div>
+                    <div>
+                      <button
+                        className='px-2'
+                        onClick={() =>
+                          updateItemQuantity(product.id, 'increase')
+                        }
+                        // disabled={cartLoading}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div>{product.variantPrice}</div>
+                  <div>
+                    <button onClick={() => deleteCartItem(product.id)}>
+                      <TrashIcon className='ml-3 w-5' />
+                    </button>
                   </div>
                 </div>
-              </div>
-              <div className='grid grid-cols-3'>
-                <div>
-                  <button
-                    className='px-2'
-                    onClick={() => decrementCartItem(product)}
-                    disabled={cartLoading}
-                  >
-                    -
-                  </button>
-                </div>
-                <div>
-                  <span className='px-2 border border-gray-200'>
-                    {product.variantQuantity}
-                  </span>
-                </div>
-                <div>
-                  <button
-                    className='px-2'
-                    onClick={() => incrementCartItem(product)}
-                    disabled={cartLoading}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div>{formatter.format(product.variantPrice)}</div>
-              <div>
-                <button onClick={() => deleteCartItem(product)}>
-                  <TrashIcon className='ml-3 w-5' />
-                </button>
-              </div>
-            </div>
-          )
-        }): 'cart is empty'}
+              )
+            })
+          : 'cart is empty'}
       </div>
 
       <div

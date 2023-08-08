@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useContext, useState } from 'react'
+import { Fragment, useContext, useEffect, useState } from 'react'
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import {
   ArrowPathIcon,
@@ -21,13 +21,17 @@ import Image from 'next/image'
 import { useShopContext } from '../context/shopContext'
 import MiniCart from '../components/MiniCart'
 import { Product, Variant } from '@/lib/createProductSlice'
+import { useCartStore } from '@/context/useCartStore'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { cartOpen, setCartOpen, cart, cartId } = useShopContext()
+  // const { cartOpen, setCartOpen, cart, cartId } = useShopContext()
+
+  const { toggleCart, cart } = useCartStore()
 
   let totalQuantity = 0
-  cart.map((item: Variant) => (totalQuantity += item.variantQuantity))
+  cart.map((item) => (totalQuantity += item.variantQuantity))
+
   return (
     <header className='bg-white'>
       <nav
@@ -71,7 +75,7 @@ const Header = () => {
             </span>
 
             <ShoppingCartIcon
-              onClick={() => setCartOpen(!cartOpen)}
+              onClick={() => toggleCart()}
               className='h-6 w-6 mr-2'
             />
             <MiniCart />

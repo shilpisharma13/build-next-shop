@@ -1,6 +1,6 @@
 'use client'
 
-import { useStore } from '@/context/store'
+import { useStore } from '@/context/useCartStore'
 import { useRef } from 'react'
 
 const StoreInitializer = ({

@@ -7,25 +7,32 @@ import { useShopContext } from '../context/shopContext'
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatter } from '../utils/helpers'
-import { useStore } from '@/context/store'
+import { useCartStore } from '@/context/useCartStore'
 
 export default function MiniCart() {
   const cancelButtonRef = useRef()
-  const { cartOpen, setCartOpen, cartLoading, checkoutUrl, cartId } =
-    useShopContext()
+  // const { cartOpen, setCartOpen, cartLoading, checkoutUrl, cartId } =
+  //   useShopContext()
 
-  const { cart } = useStore((state) => ({ cart: state.cart }))
-  console.log(cart)
+  const {
+    cart,
+    toggleCart,
+    showCart,
+    clearCart,
+
+    updateItemQuantity,
+  } = useCartStore()
+
   let cartTotal = 0
   cart.map((item) => (cartTotal += item?.variantPrice * item?.variantQuantity))
 
   return (
-    <Transition.Root show={cartOpen} as={Fragment}>
+    <Transition.Root show={showCart} as={Fragment}>
       <Dialog
         initialFocus={cancelButtonRef}
         as='div'
         className='relative z-10'
-        onClose={() => setCartOpen(!cartOpen)}
+        onClose={() => toggleCart()}
       >
         <Transition.Child
           as={Fragment}
@@ -84,11 +91,7 @@ export default function MiniCart() {
                                   className='relative flex py-6'
                                 >
                                   <div
-                                    className={`top-0 left-0 right-0 z-50 w-full h-full absolute ${
-                                      cartLoading
-                                        ? 'bg-white opacity-60'
-                                        : 'hidden'
-                                    }`}
+                                    className={`top-0 left-0 right-0 z-50 w-full h-full absolute`}
                                   ></div>
                                   <div className='relative flex-shrink-0 w-24 h-24 overflow-hidden border border-gray-200 rounded-md'>
                                     <Image
@@ -130,9 +133,12 @@ export default function MiniCart() {
                                         <button
                                           className='px-2'
                                           onClick={() =>
-                                            decrementCartItem(product)
+                                            updateItemQuantity(
+                                              product.id,
+                                              'decrease'
+                                            )
                                           }
-                                          disabled={cartLoading}
+                                          // disabled={cartLoading}
                                         >
                                           -
                                         </button>
@@ -142,9 +148,12 @@ export default function MiniCart() {
                                         <button
                                           className='px-2'
                                           onClick={() =>
-                                            incrementCartItem(product)
+                                            updateItemQuantity(
+                                              product.id,
+                                              'increase'
+                                            )
                                           }
-                                          disabled={cartLoading}
+                                          // disabled={cartLoading}
                                         >
                                           +
                                         </button>
@@ -152,11 +161,11 @@ export default function MiniCart() {
                                       <div className='flex'>
                                         <button
                                           onClick={() =>
-                                            removeCartItem(product.id)
+                                            deleteCartItem(product.id)
                                           }
                                           type='button'
                                           className='font-medium text-gray-500 hover:text-gray-800'
-                                          disabled={cartLoading}
+                                          // disabled={cartLoading}
                                         >
                                           Remove
                                         </button>
@@ -183,17 +192,12 @@ export default function MiniCart() {
                         <p className='mt-0.5 text-sm text-gray-500'>
                           Shipping and taxes calculated at checkout.
                         </p>
-                        <div
-                          className='mt-6'
-                          onClick={() => setCartOpen(false)}
-                        >
+                        <div className='mt-6' onClick={() => toggleCart()}>
                           <Link
                             href={`/cart`}
-                            className={`flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-black border border-transparent rounded-md shadow-sm hover:bg-gray-800 ${
-                              cartLoading
-                                ? 'cursor-not-allowed'
-                                : 'cursor-pointer'
-                            }`}
+                            className={`flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-black border border-transparent rounded-md shadow-sm hover:bg-gray-800 
+                  
+                            `}
                           >
                             View Cart
                           </Link>

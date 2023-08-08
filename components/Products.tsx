@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 import ProductCard from './ProductCard'
 import { Product, ProductSlice } from '@/lib/createProductSlice'
 import { getProducts } from '@/utils/shopify'
+import { useEffect } from 'react'
+import { useCartStore } from '@/context/useCartStore'
 
 interface Props {
   products: []
