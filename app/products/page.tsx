@@ -1,7 +1,5 @@
 import Sort from '@/components/Sort'
-import {
-  getProducts,
-} from '../../utils/shopify'
+import { getProducts } from '../../utils/shopify'
 import SidebarFilter from '@/components/SidebarFilter'
 import Products from '@/components/Products'
 
@@ -29,9 +27,7 @@ export default async function Page() {
             <SidebarFilter />
           </div>
           <div className='col-span-4'>
-           
-              <Products products={initialData} />
-            
+            <Products products={initialData} />
           </div>
         </div>
       </main>

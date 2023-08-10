@@ -8,23 +8,24 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { formatter } from '../utils/helpers'
 import { useCartStore } from '@/context/useCartStore'
+import useStore from '@/context/useStore'
 
-export default function MiniCart() {
+const MiniCart = () => {
+  const cart = useStore(useCartStore, (state) => state.cart)
+  const showCart = useCartStore((state) => state.showCart)
+  const cartId = useCartStore((state) => state.cartId)
+  console.log(cartId)
+  const [deleteCartItem, updateItemQuantity, toggleCart] = useCartStore(
+    (state) => [
+      state.deleteCartItem,
+      state.updateItemQuantity,
+      state.toggleCart,
+    ]
+  )
   const cancelButtonRef = useRef()
-  // const { cartOpen, setCartOpen, cartLoading, checkoutUrl, cartId } =
-  //   useShopContext()
-
-  const {
-    cart,
-    toggleCart,
-    showCart,
-    clearCart,
-
-    updateItemQuantity,
-  } = useCartStore()
 
   let cartTotal = 0
-  cart.map((item) => (cartTotal += item?.variantPrice * item?.variantQuantity))
+  cart?.map((item) => (cartTotal += item?.variantPrice * item?.variantQuantity))
 
   return (
     <Transition.Root show={showCart} as={Fragment}>
@@ -70,7 +71,7 @@ export default function MiniCart() {
                             ref={cancelButtonRef}
                             type='button'
                             className='-m-2 p-2 text-gray-400 hover:text-gray-500'
-                            onClick={() => setCartOpen(false)}
+                            onClick={() => toggleCart()}
                           >
                             <span className='sr-only'>Close panel</span>
                             <XMarkIcon className='h-6 w-6' aria-hidden='true' />
@@ -80,12 +81,12 @@ export default function MiniCart() {
 
                       <div className='mt-8'>
                         <div className='flow-root'>
-                          {cart.length > 0 ? (
+                          {cart?.length > 0 ? (
                             <ul
                               role='list'
                               className='-my-6 divide-y divide-gray-200'
                             >
-                              {cart.map((product) => (
+                              {cart?.map((product) => (
                                 <li
                                   key={product.id + Math.random()}
                                   className='relative flex py-6'
@@ -110,9 +111,7 @@ export default function MiniCart() {
                                             href={`/products/${product.handle}`}
                                             passHref
                                           >
-                                            <p
-                                              onClick={() => setCartOpen(false)}
-                                            >
+                                            <p onClick={() => toggleCart()}>
                                               {product.title}
                                             </p>
                                           </Link>
@@ -183,7 +182,7 @@ export default function MiniCart() {
                         </div>
                       </div>
                     </div>
-                    {cart.length > 0 ? (
+                    {cart?.length > 0 ? (
                       <div className='px-4 py-6 border-t border-gray-200 sm:px-6'>
                         <div className='flex justify-between text-base font-medium text-gray-900'>
                           <p>Subtotal</p>
@@ -194,7 +193,7 @@ export default function MiniCart() {
                         </p>
                         <div className='mt-6' onClick={() => toggleCart()}>
                           <Link
-                            href={`/cart`}
+                            href={`/cart/${encodeURIComponent(cartId)}`}
                             className={`flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-black border border-transparent rounded-md shadow-sm hover:bg-gray-800 
                   
                             `}
@@ -233,3 +232,4 @@ export default function MiniCart() {
     </Transition.Root>
   )
 }
+export default MiniCart

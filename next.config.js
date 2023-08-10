@@ -7,6 +7,18 @@ const nextConfig = {
   images: {
     domains: ['cdn.shopify.com', 'tailwindui.com'],
   },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/products',
+  //     },
+  //     {
+  //       source: '/cart/*',
+  //       destination: '/cart',
+  //     },
+  //   ]
+  // },
 }
 
 module.exports = nextConfig

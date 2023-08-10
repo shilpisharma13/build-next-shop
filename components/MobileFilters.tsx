@@ -12,6 +12,8 @@ import ProductCard from './ProductCard'
 import { subCategories, sortOptions, filters } from '../utils/filter'
 
 const MobileFilters = ({ mobileFiltersOpen, setMobileFiltersOpen }) => {
+  
+  
  
   return (
     <Transition.Root show={mobileFiltersOpen} as={Fragment}>

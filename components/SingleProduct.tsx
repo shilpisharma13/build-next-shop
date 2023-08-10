@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import ProductForm from './ProductForm'
 import { getVariantInventory } from '@/utils/shopify'
-import useSWR from 'swr'
+
 import { Product } from '@/lib/createProductSlice'
 import { useQuery } from '@tanstack/react-query'
 

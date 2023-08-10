@@ -10,12 +10,11 @@ import useStore from '@/context/useStore'
 
 export const CartPage = () => {
   const cart = useStore(useCartStore, (state) => state.cart)
-  const deleteCartItem = useStore(useCartStore, (state) => state.deleteCartItem)
-  const updateItemQuantity = useStore(
-    useCartStore,
-    (state) => state.updateItemQuantity
-  )
-  const clearCart = useStore(useCartStore, (state) => state.clearCart)
+
+  const [deleteCartItem, updateItemQuantity] = useCartStore((state) => [
+    state.deleteCartItem,
+    state.updateItemQuantity,
+  ])
 
   let cartTotal = 0
   let totalQuantity = 0
@@ -34,8 +33,8 @@ export const CartPage = () => {
             {totalQuantity} items in cart
           </h2>
         </div>
-        {cart.length > 0
-          ? cart.map((product) => {
+        {cart?.length > 0
+          ? cart?.map((product) => {
               return (
                 <div
                   key={product.id}

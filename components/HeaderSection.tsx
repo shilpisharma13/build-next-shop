@@ -22,15 +22,17 @@ import { useShopContext } from '../context/shopContext'
 import MiniCart from '../components/MiniCart'
 import { Product, Variant } from '@/lib/createProductSlice'
 import { useCartStore } from '@/context/useCartStore'
+import useStore from '@/context/useStore'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  // const { cartOpen, setCartOpen, cart, cartId } = useShopContext()
+  const cart = useStore(useCartStore, (state) => state.cart)
+  const showCart = useCartStore((state) => state.showCart)
 
-  const { toggleCart, cart } = useCartStore()
+  const [toggleCart] = useCartStore((state) => [state.toggleCart])
 
   let totalQuantity = 0
-  cart.map((item) => (totalQuantity += item.variantQuantity))
+  cart?.map((item) => (totalQuantity += item.variantQuantity))
 
   return (
     <header className='bg-white'>

@@ -1,11 +1,13 @@
 import { VariantOptions } from '@/components/ProductForm'
 import { Product } from '@/lib/createProductSlice'
+import { addLineToCart, createCart } from '@/utils/shopify'
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 
-interface CartStore {
+export interface CartStore {
   cart: VariantOptions[]
-  showCart: Boolean
+  showCart: boolean
+  cartId: string
   addToCart: (product: VariantOptions) => void
   deleteCartItem: (productId: string) => void
   updateItemQuantity: (
@@ -20,24 +22,53 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       cart: [],
-      addToCart: (product) => {
+      showCart: false,
+      cartId: '',
+      addToCart: async (product) => {
         const cart = get().cart
-        const findProduct = cart.find((item) => item.id === product.id)
-        if (findProduct) {
-          findProduct.variantQuantity! += 1
+        const id = get().cartId
+        const newItem = { ...product }
+        if (cart.length === 0) {
+          const savedCart = await createCart(
+            product.id,
+            product.variantQuantity
+          )
+          set({
+            cart: [newItem],
+            showCart: true,
+            cartId: savedCart.cartCreate.cart.id,
+          })
         } else {
-          cart.push({ ...product })
-        }
+          let newCart: VariantOptions[] = []
+          let added = false
 
-        set({ cart, showCart: true })
+          cart.map((item) => {
+            if (item.id === newItem.id) {
+              item.variantQuantity++
+              newCart = [...cart]
+              added = true
+            }
+          })
+
+          if (!added) {
+            newCart = [...cart, newItem]
+          }
+
+          const newSavedCart = await addLineToCart(id, newItem)
+
+          set({
+            cart: [...newCart],
+            showCart: true,
+          })
+        }
       },
       deleteCartItem: (productId) => {
-        const cart = get().cart.filter((item) => item.id !== productId)
+        const cart = get().cart?.filter((item) => item.id !== productId)
         set({ cart })
       },
       updateItemQuantity: (productId, action) => {
         const cart = get().cart
-        const findProduct = cart.find((item) => item.id === productId)
+        const findProduct = cart?.find((item) => item.id === productId)
         if (findProduct) {
           if (action === 'decrease') {
             findProduct.variantQuantity =
@@ -49,22 +80,18 @@ export const useCartStore = create<CartStore>()(
           }
         }
 
-        let total = 0
-        cart.map(
-          (item) =>
-            (total += parseInt(item?.variantPrice) * item?.variantQuantity)
-        )
         set({ cart })
       },
-      showCart: false,
+
       toggleCart: () => {
         set({ showCart: !get().showCart })
       },
       clearCart: () => set({ cart: [] }),
     }),
     {
-      name: 'cart_id',
-      storage: createJSONStorage(() => sessionStorage),
+      name: 'cart_shopify',
+      // getStorage: () => localStorage,
+      // storage: createJSONStorage(() => sessionStorage),
     }
   )
 )
