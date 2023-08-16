@@ -1,5 +1,5 @@
 import Sort from '@/components/Sort'
-import { getProducts } from '../../utils/shopify'
+import { getProducts } from '../../utils/shopify/productQueries.js'
 import SidebarFilter from '@/components/SidebarFilter'
 import Products from '@/components/Products'
 

@@ -8,6 +8,7 @@ export interface CartStore {
   cart: VariantOptions[]
   showCart: boolean
   cartId: string
+  checkoutUrl: string
   addToCart: (product: VariantOptions) => void
   deleteCartItem: (productId: string) => void
   updateItemQuantity: (
@@ -24,6 +25,7 @@ export const useCartStore = create<CartStore>()(
       cart: [],
       showCart: false,
       cartId: '',
+      checkoutUrl: '',
       addToCart: async (product) => {
         const cart = get().cart
         const id = get().cartId
@@ -33,10 +35,12 @@ export const useCartStore = create<CartStore>()(
             product.id,
             product.variantQuantity
           )
+          console.log(savedCart)
           set({
             cart: [newItem],
             showCart: true,
             cartId: savedCart.cartCreate.cart.id,
+            checkoutUrl: savedCart.cartCreate.cart.checkoutUrl,
           })
         } else {
           let newCart: VariantOptions[] = []
@@ -56,9 +60,11 @@ export const useCartStore = create<CartStore>()(
 
           const newSavedCart = await addLineToCart(id, newItem)
 
+          console.log(newSavedCart.cartLinesAdd.cart)
           set({
             cart: [...newCart],
             showCart: true,
+            
           })
         }
       },

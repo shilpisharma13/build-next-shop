@@ -1,6 +1,6 @@
 import { Product } from '@/lib/createProductSlice'
 import SingleProduct from '../../../components/SingleProduct'
-import { getSingleProduct } from '../../../utils/shopify'
+import { getSingleProduct } from '../../../utils/shopify/productQueries.js'
 
 interface Props {
   params: {
@@ -11,7 +11,7 @@ const Page = async ({ params: { handle } }: Props) => {
   const response = await getSingleProduct(handle)
 
   const product: Product = response.productByHandle
- 
+
   return (
     <h1>
       <SingleProduct product={product} />
