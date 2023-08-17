@@ -35,7 +35,7 @@ const TempCartPage = ({ data }) => {
         })}
       </ul>
       <h2>Total</h2>
-      <div>{data.cart.estimatedCost.totalAmount.amount}</div>
+      {/* <div>{data.cart.estimatedCost.totalAmount.amount}</div> */}
       {/* <button type='submit'>Checkout</button> */}
     </form>
   )

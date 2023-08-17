@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import ProductForm from './ProductForm'
-import { getVariantInventory } from '@/utils/shopify'
+import { getVariantInventory } from '@/utils/shopify/productQueries.js'
 
 import { Product } from '@/lib/createProductSlice'
 import { useQuery } from '@tanstack/react-query'

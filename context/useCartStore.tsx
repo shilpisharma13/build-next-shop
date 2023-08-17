@@ -1,33 +1,42 @@
 import { VariantOptions } from '@/components/ProductForm'
 import { Product } from '@/lib/createProductSlice'
-import { addLineToCart, createCart } from '@/utils/shopify'
+import {
+  addLineToCart,
+  createCart,
+  updateCartItem,
+} from '@/utils/shopify/cartQueries'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export interface CartStore {
-  cart: VariantOptions[]
-  showCart: boolean
   cartId: string
+  cart: VariantOptions[]
+  miniCart: VariantOptions[]
+  showCart: boolean
   checkoutUrl: string
   addToCart: (product: VariantOptions) => void
   deleteCartItem: (productId: string) => void
   updateItemQuantity: (
-    productId: string,
-    action: 'increase' | 'decrease'
+    cartId: string,
+    variantId: string,
+    cartLineId: string,
+    quantity: number,
+    action: 'decrease' | 'increase'
   ) => void
   toggleCart: () => void
-  clearCart: () => void
 }
 
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
-      cart: [],
-      showCart: false,
       cartId: '',
+      cart: [],
+      miniCart: [],
+      showCart: false,
       checkoutUrl: '',
       addToCart: async (product) => {
         const cart = get().cart
+        const miniCart = get().miniCart
         const id = get().cartId
         const newItem = { ...product }
         if (cart.length === 0) {
@@ -37,7 +46,8 @@ export const useCartStore = create<CartStore>()(
           )
           console.log(savedCart)
           set({
-            cart: [newItem],
+            cart: savedCart.cartCreate.cart,
+            miniCart: [newItem],
             showCart: true,
             cartId: savedCart.cartCreate.cart.id,
             checkoutUrl: savedCart.cartCreate.cart.checkoutUrl,
@@ -46,25 +56,25 @@ export const useCartStore = create<CartStore>()(
           let newCart: VariantOptions[] = []
           let added = false
 
-          cart.map((item) => {
+          miniCart.map((item) => {
             if (item.id === newItem.id) {
               item.variantQuantity++
-              newCart = [...cart]
+              newCart = [...miniCart]
               added = true
             }
           })
 
           if (!added) {
-            newCart = [...cart, newItem]
+            newCart = [...miniCart, newItem]
           }
 
           const newSavedCart = await addLineToCart(id, newItem)
 
-          console.log(newSavedCart.cartLinesAdd.cart)
+          console.log(newSavedCart.cartLinesAdd)
           set({
-            cart: [...newCart],
+            cart: newSavedCart.cartLinesAdd.cart,
+            miniCart: [...newCart],
             showCart: true,
-            
           })
         }
       },
@@ -72,9 +82,36 @@ export const useCartStore = create<CartStore>()(
         const cart = get().cart?.filter((item) => item.id !== productId)
         set({ cart })
       },
-      updateItemQuantity: (productId, action) => {
-        const cart = get().cart
-        const findProduct = cart?.find((item) => item.id === productId)
+      updateItemQuantity: async (
+        cartId,
+        variantId,
+        cartLineId,
+        quantity,
+        action
+      ) => {
+        let changedQuantity = quantity
+        if (action === 'increase') {
+          changedQuantity++
+          const newCart = await updateCartItem(
+            cartId,
+            cartLineId,
+            changedQuantity
+          )
+          set({ cart: newCart.cartLinesUpdate.cart })
+        }
+        if (action === 'decrease') {
+          changedQuantity--
+          const newCart = await updateCartItem(
+            cartId,
+            cartLineId,
+            changedQuantity
+          )
+          set({ cart: newCart.cartLinesUpdate.cart })
+        }
+
+        // console.log(cartId, variantId, quantity)
+        const miniCart = get().miniCart
+        const findProduct = miniCart?.find((item) => item.id === variantId)
         if (findProduct) {
           if (action === 'decrease') {
             findProduct.variantQuantity =
@@ -86,13 +123,12 @@ export const useCartStore = create<CartStore>()(
           }
         }
 
-        set({ cart })
+        set({ miniCart: miniCart })
       },
 
       toggleCart: () => {
         set({ showCart: !get().showCart })
       },
-      clearCart: () => set({ cart: [] }),
     }),
     {
       name: 'cart_shopify',

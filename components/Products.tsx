@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import ProductCard from './ProductCard'
 import { Product, ProductSlice } from '@/lib/createProductSlice'
-import { getProducts } from '@/utils/shopify'
+import { getProducts } from '@/utils/shopify/productQueries.js'
 import { useEffect } from 'react'
 import { useCartStore } from '@/context/useCartStore'
 

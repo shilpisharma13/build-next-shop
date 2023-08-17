@@ -19,7 +19,43 @@ export const createCart = async (itemId, quantity) => {
       cartCreate(input: $cartInput) {
         cart {
           id
+          createdAt
+          updatedAt
           checkoutUrl
+          lines(first: 10) {
+            edges {
+              node {
+                id
+                merchandise {
+                  ... on ProductVariant {
+                    id
+                  }
+                }
+              }
+            }
+          }
+          attributes {
+            key
+            value
+          }
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+            subtotalAmount {
+              amount
+              currencyCode
+            }
+            totalTaxAmount {
+              amount
+              currencyCode
+            }
+            totalDutyAmount {
+              amount
+              currencyCode
+            }
+          }
         }
       }
     }
@@ -47,10 +83,10 @@ export const createCart = async (itemId, quantity) => {
 export const getCart = async (cartId) => {
   const getCartQuery = gql`
     query getCart($cartId: ID!) {
-      cart(id: $cartID) {
+      cart(id: $cartId) {
         id
         checkoutUrl
-        lines(first: 10) {
+        lines(first: 30) {
           edges {
             node {
               id
@@ -66,6 +102,8 @@ export const getCart = async (cartId) => {
                   image {
                     url
                     altText
+                    width
+                    height
                   }
                   selectedOptions {
                     name
@@ -86,24 +124,59 @@ export const getCart = async (cartId) => {
   `
 
   const variables = {
-    cartId,
+    cartId: cartId,
   }
+
   try {
     const response = await graphQLClient.request(getCartQuery, variables)
+    console.log(response)
     return response
   } catch (error) {
     console.log(`Unable to fetch cart ${error}`)
   }
 }
 
-
 export const addLineToCart = async (cartId, addedItem) => {
   const addCartLinesQuery = gql`
-    mutation addToCart($cartId: ID!, $lines: [CartLineInput!]!) {
+    mutation addCartLines($cartId: ID!, $lines: [CartLineInput!]!) {
       cartLinesAdd(cartId: $cartId, lines: $lines) {
         cart {
           id
-          checkoutUrl
+          lines(first: 10) {
+            edges {
+              node {
+                quantity
+                merchandise {
+                  ... on ProductVariant {
+                    id
+                  }
+                }
+              }
+            }
+          }
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+            subtotalAmount {
+              amount
+              currencyCode
+            }
+            totalTaxAmount {
+              amount
+              currencyCode
+            }
+            totalDutyAmount {
+              amount
+              currencyCode
+            }
+          }
+        }
+
+        userErrors {
+          field
+          message
         }
       }
     }
@@ -127,26 +200,84 @@ export const addLineToCart = async (cartId, addedItem) => {
 }
 
 export const removeItemLines = async (cartId) => {
-const removeItemMutation = gql`
-  mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
-    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
-      cart {
-        id
+  const removeItemMutation = gql`
+    mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+      cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+        cart {
+          id
+        }
       }
     }
+  `
+
+  const variables = {
+    cartId,
+    lineIds: [cartId],
   }
-`
 
-const variables = {
-  cartId,
-  lineIds: [cartId],
+  try {
+    const response = await graphQLClient.request(removeItemMutation, variables)
+    console.log(response)
+    return response
+  } catch (error) {
+    throw new Error(`Unable to remove products from cart: ${error}`)
+  }
 }
 
-try {
-  const response = await graphQLClient.request(removeItemMutation, variables)
-  console.log(response)
-  return response
-} catch (error) {
-  throw new Error(`Unable to remove products from cart: ${error}`)
+export const updateCartItem = async (cartId, cartLine, quantity) => {
+  const cartLineUpdate = gql`
+    mutation updateCartLines($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+      cartLinesUpdate(cartId: $cartId, lines: $lines) {
+        cart {
+          id
+          lines(first: 10) {
+            edges {
+              node {
+                id
+                quantity
+                merchandise {
+                  ... on ProductVariant {
+                    id
+                  }
+                }
+              }
+            }
+          }
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+            subtotalAmount {
+              amount
+              currencyCode
+            }
+            totalTaxAmount {
+              amount
+              currencyCode
+            }
+            totalDutyAmount {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+    }
+  `
+  const variables = {
+    cartId,
+    lines: {
+      id: cartLine,
+      quantity: quantity,
+    },
+  }
+
+  try {
+    const response = await graphQLClient.request(cartLineUpdate, variables)
+    console.log(response)
+    return response
+  } catch (error) {
+    throw new Error(`Unable to update the quatity of the product : ${error}`)
+  }
 }
- }

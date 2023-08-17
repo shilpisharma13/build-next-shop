@@ -26,13 +26,14 @@ import useStore from '@/context/useStore'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const cart = useStore(useCartStore, (state) => state.cart)
-  const showCart = useCartStore((state) => state.showCart)
-
+  const miniCart = useStore(useCartStore, (state) => state.miniCart)
+  
   const [toggleCart] = useCartStore((state) => [state.toggleCart])
 
   let totalQuantity = 0
-  cart?.map((item) => (totalQuantity += item.variantQuantity))
+  miniCart?.map((item) => {
+    totalQuantity += item.variantQuantity
+  })
 
   return (
     <header className='bg-white'>

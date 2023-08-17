@@ -1,6 +1,6 @@
 'use client'
 
-import { createCart, addLineToCart } from '@/utils/shopify'
+import { createCart, addLineToCart } from '@/utils/shopify/cartQueries'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const CartContext = createContext()

@@ -11,10 +11,10 @@ import { useCartStore } from '@/context/useCartStore'
 import useStore from '@/context/useStore'
 
 const MiniCart = () => {
-  const cart = useStore(useCartStore, (state) => state.cart)
+  const miniCart = useStore(useCartStore, (state) => state.miniCart)
   const showCart = useCartStore((state) => state.showCart)
   const cartId = useCartStore((state) => state.cartId)
-  console.log(cartId)
+  
   const [deleteCartItem, updateItemQuantity, toggleCart] = useCartStore(
     (state) => [
       state.deleteCartItem,
@@ -25,7 +25,9 @@ const MiniCart = () => {
   const cancelButtonRef = useRef()
 
   let cartTotal = 0
-  cart?.map((item) => (cartTotal += item?.variantPrice * item?.variantQuantity))
+  miniCart?.map(
+    (item) => (cartTotal += item?.variantPrice * item?.variantQuantity)
+  )
 
   return (
     <Transition.Root show={showCart} as={Fragment}>
@@ -81,12 +83,12 @@ const MiniCart = () => {
 
                       <div className='mt-8'>
                         <div className='flow-root'>
-                          {cart?.length > 0 ? (
+                          {miniCart?.length > 0 ? (
                             <ul
                               role='list'
                               className='-my-6 divide-y divide-gray-200'
                             >
-                              {cart?.map((product) => (
+                              {miniCart?.map((product) => (
                                 <li
                                   key={product.id + Math.random()}
                                   className='relative flex py-6'
@@ -127,8 +129,10 @@ const MiniCart = () => {
                                       </p>
                                     </div>
                                     <div className='flex items-end justify-between flex-1 text-sm'>
-                                      {/* <p className="text-gray-500">Qty {product.variantQuantity}</p> */}
-                                      <div className={`border`}>
+                                      <p className='text-gray-500'>
+                                        Qty: {product.variantQuantity}
+                                      </p>
+                                      {/* <div className={`border`}>
                                         <button
                                           className='px-2'
                                           onClick={() =>
@@ -168,7 +172,7 @@ const MiniCart = () => {
                                         >
                                           Remove
                                         </button>
-                                      </div>
+                                      </div> */}
                                     </div>
                                   </div>
                                 </li>
@@ -182,7 +186,7 @@ const MiniCart = () => {
                         </div>
                       </div>
                     </div>
-                    {cart?.length > 0 ? (
+                    {miniCart?.length > 0 ? (
                       <div className='px-4 py-6 border-t border-gray-200 sm:px-6'>
                         <div className='flex justify-between text-base font-medium text-gray-900'>
                           <p>Subtotal</p>

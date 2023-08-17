@@ -3,26 +3,36 @@ import { formatter } from '../utils/helpers'
 import { useShopContext } from '@/context/shopContext'
 import Image from 'next/image'
 import { TrashIcon, UsersIcon } from '@heroicons/react/24/outline'
-import { getCart } from '@/utils/shopify'
+import { getCart } from '@/utils/shopify/cartQueries'
 import Link from 'next/link'
 import { useCartStore } from '@/context/useCartStore'
 import useStore from '@/context/useStore'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import CartAmountButtons from './CartAmountButtons'
+export const CartPage = ({ cart, cartId }) => {
+  const miniCart = useStore(useCartStore, (state) => state.miniCart)
 
-export const CartPage = () => {
-  const cart = useStore(useCartStore, (state) => state.cart)
-
+  // const { data } = useQuery({
+  //   queryKey: ['cart', cartId],
+  //   queryFn: async ({ queryKey }) => await getCart(queryKey[1]),
+  // })
+  // console.log(data)
   const [deleteCartItem, updateItemQuantity] = useCartStore((state) => [
     state.deleteCartItem,
     state.updateItemQuantity,
   ])
 
+  // useEffect(() => {
+  //   window.location.reload()
+  // }, [])
   let cartTotal = 0
   let totalQuantity = 0
-  cart?.map(
-    (item) =>
-      (cartTotal += parseInt(item?.variantPrice) * item?.variantQuantity)
-  )
-  cart?.map((item) => (totalQuantity += item.variantQuantity))
+  cart?.map((item) => {
+    cartTotal +=
+      parseInt(item?.node.merchandise.priceV2?.amount) * item?.node.quantity
+    totalQuantity += item.node.quantity
+  })
 
   return (
     <div className='bg-white flex px-4 flex-grow justify-between mt-10'>
@@ -35,64 +45,39 @@ export const CartPage = () => {
         </div>
         {cart?.length > 0
           ? cart?.map((product) => {
+              const { id, merchandise } = product.node
+              let { quantity } = product.node
+              console.log(product)
               return (
                 <div
-                  key={product.id}
+                  key={id}
                   className='flex justify-between hover:bg-gray-100  px-3 py-5'
                 >
                   <div className='flex basis-3/5'>
                     <div className='flex'>
                       <div className='relative flex-shrink-0 w-24 h-20 overflow-hidden border border-gray-200 rounded-md'>
                         <Image
-                          src={product.image}
-                          alt={product.title}
-                          layout='fill'
-                          objectFit='cover'
+                          src={merchandise.image?.url}
+                          alt={merchandise.product?.title}
+                          height={merchandise.image?.height}
+                          width={merchandise.image?.width}
                         />
                       </div>
                       <div className='flex flex-col  ml-4'>
                         <Link
                           className='font-bold text-sm'
-                          href={`/products/${product.handle}`}
+                          href={`/products/${merchandise.product.handle}`}
                         >
-                          {product.title}
+                          {merchandise.product.title}
                         </Link>
                         <span className='text-gray-500 text-m'>
-                          {product.variantTitle}
+                          {merchandise.title}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className='grid grid-cols-3'>
-                    <div>
-                      <button
-                        className='px-2'
-                        onClick={() =>
-                          updateItemQuantity(product.id, 'decrease')
-                        }
-                        // disabled={cartLoading}
-                      >
-                        -
-                      </button>
-                    </div>
-                    <div>
-                      <span className='px-2 border border-gray-200'>
-                        {product.variantQuantity}
-                      </span>
-                    </div>
-                    <div>
-                      <button
-                        className='px-2'
-                        onClick={() =>
-                          updateItemQuantity(product.id, 'increase')
-                        }
-                        // disabled={cartLoading}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <div>{product.variantPrice}</div>
+                  <CartAmountButtons product={product} cartId={cartId} />
+                  <div>{merchandise.priceV2.amount}</div>
                   <div>
                     <button onClick={() => deleteCartItem(product.id)}>
                       <TrashIcon className='ml-3 w-5' />
