@@ -199,7 +199,7 @@ export const addLineToCart = async (cartId, addedItem) => {
   }
 }
 
-export const removeItemLines = async (cartId) => {
+export const removeItemLines = async (cartId, id) => {
   const removeItemMutation = gql`
     mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
       cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
@@ -212,7 +212,7 @@ export const removeItemLines = async (cartId) => {
 
   const variables = {
     cartId,
-    lineIds: [cartId],
+    lineIds: [id],
   }
 
   try {

@@ -3,6 +3,7 @@ import { Product } from '@/lib/createProductSlice'
 import {
   addLineToCart,
   createCart,
+  removeItemLines,
   updateCartItem,
 } from '@/utils/shopify/cartQueries'
 import { create } from 'zustand'
@@ -15,7 +16,7 @@ export interface CartStore {
   showCart: boolean
   checkoutUrl: string
   addToCart: (product: VariantOptions) => void
-  deleteCartItem: (productId: string) => void
+  deleteCartItem: (cartId: string, itemId: string, variantId: string) => void
   updateItemQuantity: (
     cartId: string,
     variantId: string,
@@ -78,9 +79,12 @@ export const useCartStore = create<CartStore>()(
           })
         }
       },
-      deleteCartItem: (productId) => {
-        const cart = get().cart?.filter((item) => item.id !== productId)
-        set({ cart })
+      deleteCartItem: async (cartId, itemId, variantId) => {
+        const newCart = await removeItemLines(cartId, itemId)
+        const miniCart = get().miniCart
+        const newMiniCart = miniCart?.filter((item) => item.id !== variantId)
+
+        set({ cart: newCart.cartLinesRemove.cart, miniCart: [...newMiniCart] })
       },
       updateItemQuantity: async (
         cartId,
@@ -124,6 +128,7 @@ export const useCartStore = create<CartStore>()(
         }
 
         set({ miniCart: miniCart })
+         window.location.reload()
       },
 
       toggleCart: () => {

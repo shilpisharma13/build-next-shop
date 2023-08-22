@@ -16,7 +16,7 @@ const CartAmountButtons = ({ product, cartId }) => {
         <button
           className='px-2'
           onClick={() => {
-            if (quantity > 1) {
+            if (newQuantity > 1) {
               console.log('clicked')
               setNewQuantity((oldQ) => {
                 let tempQ = oldQ - 1

@@ -1,34 +1,27 @@
 'use client'
-import { formatter } from '../utils/helpers'
-import { useShopContext } from '@/context/shopContext'
+
 import Image from 'next/image'
-import { TrashIcon, UsersIcon } from '@heroicons/react/24/outline'
+import { TrashIcon } from '@heroicons/react/24/outline'
 import { getCart } from '@/utils/shopify/cartQueries'
 import Link from 'next/link'
 import { useCartStore } from '@/context/useCartStore'
 import useStore from '@/context/useStore'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
 import CartAmountButtons from './CartAmountButtons'
-export const CartPage = ({ cart, cartId }) => {
+
+export const CartPage = ({ cartId }) => {
   const miniCart = useStore(useCartStore, (state) => state.miniCart)
+  const deleteCartItem = useCartStore((state) => state.deleteCartItem)
 
-  // const { data } = useQuery({
-  //   queryKey: ['cart', cartId],
-  //   queryFn: async ({ queryKey }) => await getCart(queryKey[1]),
-  // })
-  // console.log(data)
-  const [deleteCartItem, updateItemQuantity] = useCartStore((state) => [
-    state.deleteCartItem,
-    state.updateItemQuantity,
-  ])
+  const { data } = useQuery({
+    queryKey: ['cart', cartId, miniCart?.length],
+    queryFn: async ({ queryKey }) => await getCart(queryKey[1]),
+    refetchOnWindowFocus: true,
+  })
 
-  // useEffect(() => {
-  //   window.location.reload()
-  // }, [])
-  let cartTotal = 0
+   let cartTotal = 0
   let totalQuantity = 0
-  cart?.map((item) => {
+  data?.cart?.lines.edges.map((item) => {
     cartTotal +=
       parseInt(item?.node.merchandise.priceV2?.amount) * item?.node.quantity
     totalQuantity += item.node.quantity
@@ -43,11 +36,11 @@ export const CartPage = ({ cart, cartId }) => {
             {totalQuantity} items in cart
           </h2>
         </div>
-        {cart?.length > 0
-          ? cart?.map((product) => {
+        {data?.cart?.lines.edges.length > 0
+          ? data?.cart.lines.edges.map((product) => {
               const { id, merchandise } = product.node
               let { quantity } = product.node
-              console.log(product)
+
               return (
                 <div
                   key={id}
@@ -79,7 +72,12 @@ export const CartPage = ({ cart, cartId }) => {
                   <CartAmountButtons product={product} cartId={cartId} />
                   <div>{merchandise.priceV2.amount}</div>
                   <div>
-                    <button onClick={() => deleteCartItem(product.id)}>
+                    <button
+                      onClick={() => {
+                        deleteCartItem(cartId, id, merchandise.id)
+                    
+                      }}
+                    >
                       <TrashIcon className='ml-3 w-5' />
                     </button>
                   </div>
