@@ -37,7 +37,7 @@ export interface VariantOptions {
   title: string
 }
 const ProductForm = ({ product, productInventory }: Props) => {
-  // const { addToCart } = useShopContext()
+  
   const { addToCart } = useCartStore((state) => ({
     addToCart: state.addToCart,
   }))

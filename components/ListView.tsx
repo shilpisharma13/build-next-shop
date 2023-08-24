@@ -1,14 +1,18 @@
 import { ListBulletIcon } from '@heroicons/react/20/solid'
+import { ProductSlice } from '@/lib/createProductSlice'
+import { Squares2X2Icon } from '@heroicons/react/20/solid'
+import ProductCard from './ProductCard'
 
-const ListView = () => {
+interface Props {
+  products: []
+}
+const ListView = ({ products }: Props) => {
   return (
-    <button
-      type='button'
-      className='-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7'
-    >
-      <span className='sr-only'>View grid</span>
-      <ListBulletIcon className='h-5 w-5' aria-hidden='true' />
-    </button>
+    <div className='grid grid-cols-1 gap-x-8 gap-y-10 '>
+      {products.map((product: ProductSlice) => (
+        <ProductCard key={product.node.id} product={product} />
+      ))}
+    </div>
   )
 }
 export default ListView

@@ -1,15 +1,17 @@
+import { ProductSlice } from "@/lib/createProductSlice"
 import { Squares2X2Icon } from "@heroicons/react/20/solid"
+import ProductCard from "./ProductCard"
 
-
-const GridView = () => {
+interface Props {
+  products: []
+}
+const GridView = ({products}: Props) => {
   return (
-    <button
-      type='button'
-      className='-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7'
-    >
-      <span className='sr-only'>View grid</span>
-      <Squares2X2Icon className='h-5 w-5' aria-hidden='true' />
-    </button>
+    <div className='grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+      {products.map((product: ProductSlice) => (
+        <ProductCard key={product.node.id} product={product} />
+      ))}
+    </div>
   )
 }
 export default GridView

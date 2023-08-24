@@ -6,6 +6,7 @@ const CartAmountButtons = ({ product, cartId }) => {
   const { quantity } = product.node
 
   const [newQuantity, setNewQuantity] = useState(quantity)
+  const [doubleClick, setDoubleClick] = useState(false)
   const [deleteCartItem, updateItemQuantity] = useCartStore((state) => [
     state.deleteCartItem,
     state.updateItemQuantity,
@@ -15,13 +16,14 @@ const CartAmountButtons = ({ product, cartId }) => {
       <div>
         <button
           className='px-2'
+          disabled={doubleClick}
           onClick={() => {
             if (newQuantity > 1) {
-              console.log('clicked')
               setNewQuantity((oldQ) => {
                 let tempQ = oldQ - 1
                 return tempQ
               })
+              setDoubleClick((o) => !o)
               updateItemQuantity(
                 cartId,
                 merchandise.id,
@@ -31,7 +33,6 @@ const CartAmountButtons = ({ product, cartId }) => {
               )
             }
           }}
-          // disabled={cartLoading}
         >
           -
         </button>
@@ -42,11 +43,13 @@ const CartAmountButtons = ({ product, cartId }) => {
       <div>
         <button
           className='px-2'
+          disabled={doubleClick}
           onClick={() => {
             setNewQuantity((oldQ) => {
               let tempQ = oldQ + 1
               return tempQ
             })
+            setDoubleClick((o) => !o)
             updateItemQuantity(
               cartId,
               merchandise.id,
@@ -55,7 +58,6 @@ const CartAmountButtons = ({ product, cartId }) => {
               'increase'
             )
           }}
-          // disabled={cartLoading}
         >
           +
         </button>

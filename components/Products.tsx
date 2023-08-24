@@ -6,12 +6,16 @@ import { Product, ProductSlice } from '@/lib/createProductSlice'
 import { getProducts } from '@/utils/shopify/productQueries.js'
 import { useEffect } from 'react'
 import { useCartStore } from '@/context/useCartStore'
+import GridView from './GridView'
+import ListView from './ListView'
+import { useProductStore } from '@/context/useProductStore'
 
 interface Props {
   products: []
 }
 
 const Products = ({ products }: Props) => {
+  const gridView = useProductStore((state) => state.gridView)
   const { data } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
@@ -20,12 +24,10 @@ const Products = ({ products }: Props) => {
     },
     initialData: products,
   })
-  return (
-    <div className='grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-      {data.map((product: ProductSlice) => (
-        <ProductCard key={product.node.id} product={product} />
-      ))}
-    </div>
-  )
+
+  if (gridView === true) {
+    return <GridView products={products} />
+  }
+  return <ListView products={products} />
 }
 export default Products

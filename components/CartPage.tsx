@@ -1,5 +1,4 @@
 'use client'
-
 import Image from 'next/image'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { getCart } from '@/utils/shopify/cartQueries'
@@ -8,18 +7,43 @@ import { useCartStore } from '@/context/useCartStore'
 import useStore from '@/context/useStore'
 import { useQuery } from '@tanstack/react-query'
 import CartAmountButtons from './CartAmountButtons'
+import { useState } from 'react'
+interface Props {
+  cartId: string
+}
 
-export const CartPage = ({ cartId }) => {
+export const CartPage = ({ cartId }: Props) => {
   const miniCart = useStore(useCartStore, (state) => state.miniCart)
-  const deleteCartItem = useCartStore((state) => state.deleteCartItem)
-
+  // const deleteCartItem = useCartStore((state) => state.deleteCartItem)
+  const [doubleClick, setDoubleClick] = useState(false)
+  const [deleteCartItem, updateItemQuantity] = useCartStore((state) => [
+    state.deleteCartItem,
+    state.updateItemQuantity,
+  ])
   const { data } = useQuery({
     queryKey: ['cart', cartId, miniCart?.length],
     queryFn: async ({ queryKey }) => await getCart(queryKey[1]),
     refetchOnWindowFocus: true,
   })
 
-   let cartTotal = 0
+  const updateQ = (oldQ, mId, productId, type) => {
+    if (type === 'increase') {
+      // let newQ = 0
+      // newQ = oldQ + 1
+      setDoubleClick((o) => !o)
+      updateItemQuantity(cartId, mId, productId, oldQ, 'increase')
+    }
+    if (type === 'decrease') {
+      if (oldQ > 1) {
+        setDoubleClick((o) => !o)
+        updateItemQuantity(cartId, mId, productId, oldQ, 'decrease')
+      }
+    }
+  }
+  // let { quantity } = product.node
+  // const [newQuantity, setNewQuantity] = useState(quantity)
+
+  let cartTotal = 0
   let totalQuantity = 0
   data?.cart?.lines.edges.map((item) => {
     cartTotal +=
@@ -69,13 +93,40 @@ export const CartPage = ({ cartId }) => {
                       </div>
                     </div>
                   </div>
-                  <CartAmountButtons product={product} cartId={cartId} />
+                  <div className='grid grid-cols-3'>
+                    <div>
+                      <button
+                        className='px-2'
+                        disabled={doubleClick}
+                        onClick={() => {
+                          updateQ(quantity, merchandise.id, id, 'decrease')
+                        }}
+                      >
+                        -
+                      </button>
+                    </div>
+                    <div>
+                      <span className='px-2 border border-gray-200'>
+                        {quantity}
+                      </span>
+                    </div>
+                    <div>
+                      <button
+                        className='px-2'
+                        disabled={doubleClick}
+                        onClick={() =>
+                          updateQ(quantity, merchandise.id, id, 'increase')
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
                   <div>{merchandise.priceV2.amount}</div>
                   <div>
                     <button
                       onClick={() => {
                         deleteCartItem(cartId, id, merchandise.id)
-                    
                       }}
                     >
                       <TrashIcon className='ml-3 w-5' />

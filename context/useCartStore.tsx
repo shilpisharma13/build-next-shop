@@ -45,7 +45,7 @@ export const useCartStore = create<CartStore>()(
             product.id,
             product.variantQuantity
           )
-          console.log(savedCart)
+          
           set({
             cart: savedCart.cartCreate.cart,
             miniCart: [newItem],
@@ -71,7 +71,7 @@ export const useCartStore = create<CartStore>()(
 
           const newSavedCart = await addLineToCart(id, newItem)
 
-          console.log(newSavedCart.cartLinesAdd)
+          
           set({
             cart: newSavedCart.cartLinesAdd.cart,
             miniCart: [...newCart],
@@ -113,7 +113,7 @@ export const useCartStore = create<CartStore>()(
           set({ cart: newCart.cartLinesUpdate.cart })
         }
 
-        // console.log(cartId, variantId, quantity)
+       
         const miniCart = get().miniCart
         const findProduct = miniCart?.find((item) => item.id === variantId)
         if (findProduct) {
@@ -128,7 +128,7 @@ export const useCartStore = create<CartStore>()(
         }
 
         set({ miniCart: miniCart })
-         window.location.reload()
+       
       },
 
       toggleCart: () => {

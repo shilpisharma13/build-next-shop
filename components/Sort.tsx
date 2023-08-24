@@ -3,18 +3,28 @@
 import { Fragment, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 
-import { ChevronDownIcon, FunnelIcon } from '@heroicons/react/20/solid'
+import {
+  ChevronDownIcon,
+  FunnelIcon,
+  ListBulletIcon,
+  Squares2X2Icon,
+} from '@heroicons/react/20/solid'
 
 import { sortOptions } from '../utils/filter'
 import GridView from './GridView'
 import ListView from './ListView'
+import { useProductStore } from '@/context/useProductStore'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 const Sort = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [gridView, setGridView] = useState(true)
+  const [setGridView, setListView, gridView] = useProductStore((state) => [
+    state.setGridView,
+    state.setListView,
+    state.gridView,
+  ])
   return (
     <div className='flex items-center'>
       <Menu as='div' className='relative inline-block text-left'>
@@ -61,7 +71,28 @@ const Sort = () => {
           </Menu.Items>
         </Transition>
       </Menu>
-      {gridView ? <GridView  /> : <ListView />}
+      <button
+        type='button'
+        onClick={setGridView}
+        className={`${
+          gridView
+            ? '-m-2 ml-5 p-2 text-gray-800  sm:ml-7'
+            : '-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7'
+        }`}
+      >
+        <Squares2X2Icon className='h-5 w-5' aria-hidden='true' />
+      </button>
+      <button
+        type='button'
+        onClick={setListView}
+        className={`${
+          !gridView
+            ? '-m-2 ml-5 p-2 text-gray-800  sm:ml-7'
+            : '-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7'
+        }`}
+      >
+        <ListBulletIcon className='h-5 w-5' aria-hidden='true' />
+      </button>
       <button
         type='button'
         className='-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden'
