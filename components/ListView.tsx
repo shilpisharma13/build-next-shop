@@ -9,7 +9,7 @@ interface Props {
 const ListView = ({ products }: Props) => {
   return (
     <div className='grid grid-cols-1 gap-x-8 gap-y-10 '>
-      {products.map((product: ProductSlice) => (
+      {products?.map((product: ProductSlice) => (
         <ProductCard key={product.node.id} product={product} />
       ))}
     </div>

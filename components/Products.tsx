@@ -9,25 +9,33 @@ import { useCartStore } from '@/context/useCartStore'
 import GridView from './GridView'
 import ListView from './ListView'
 import { useProductStore } from '@/context/useProductStore'
+import { getFilteredProducts } from '@/utils/shopify/filterQueries'
 
 interface Props {
   products: []
 }
 
-const Products = ({ products }: Props) => {
-  const gridView = useProductStore((state) => state.gridView)
+const Products = () => {
+  const [gridView, filterOption] = useProductStore((state) => [
+    state.gridView,
+    state.filterOption,
+  ])
   const { data } = useQuery({
-    queryKey: ['products'],
-    queryFn: async () => {
-      const response = await getProducts()
-      return response.products.edges
+    queryKey: !filterOption ? ['products'] : ['products', filterOption],
+    queryFn: async ({ queryKey }) => {
+      if (queryKey[1] === '') {
+        const response = await getProducts()
+        return response.products.edges
+      } else {
+        const response = await getFilteredProducts(queryKey[1])
+        return response.collection.products.edges
+      }
     },
-    initialData: products,
   })
 
   if (gridView === true) {
-    return <GridView products={products} />
+    return <GridView products={data} />
   }
-  return <ListView products={products} />
+  return <ListView products={data} />
 }
 export default Products

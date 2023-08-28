@@ -3,11 +3,13 @@
 import { Disclosure } from '@headlessui/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { subCategories, filters } from '../utils/filter'
+import { useProductStore } from '@/context/useProductStore'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 const SidebarFilter = () => {
+  const setFilter = useProductStore((state) => state.setFilter)
   return (
     <form className='hidden lg:block'>
       <h3 className='sr-only'>Categories</h3>
@@ -17,7 +19,9 @@ const SidebarFilter = () => {
       >
         {subCategories.map((category) => (
           <li key={category.name}>
-            <a href={category.href}>{category.name}</a>
+            <button onClick={() => setFilter(category.name.toLowerCase())}>
+              {category.name}
+            </button>
           </li>
         ))}
       </ul>
@@ -70,6 +74,9 @@ const SidebarFilter = () => {
           )}
         </Disclosure>
       ))}
+      <p>
+        <button onClick={() => setFilter('')}>Clear all filters</button>
+      </p>
     </form>
   )
 }
