@@ -4,12 +4,27 @@ import { Disclosure } from '@headlessui/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
 import { subCategories, filters } from '../utils/filter'
 import { useProductStore } from '@/context/useProductStore'
+import { useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { getProducts } from '@/utils/shopify/productQueries.js'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 const SidebarFilter = () => {
-  const setFilter = useProductStore((state) => state.setFilter)
+  const clearFilters = useProductStore((state) => state.clearFilters)
+  // const { data } = useQuery({
+  //   queryKey: ['products'],
+  //   queryFn: async () => {
+  //     const response = await getProducts()
+  //     console.log(response)
+  //     return response
+  //   },
+
+  //   onSuccess: loadProducts,
+  // })
+
+  const filterProducts = useProductStore((state) => state.filterProducts)
   return (
     <form className='hidden lg:block'>
       <h3 className='sr-only'>Categories</h3>
@@ -19,7 +34,7 @@ const SidebarFilter = () => {
       >
         {subCategories.map((category) => (
           <li key={category.name}>
-            <button onClick={() => setFilter(category.name.toLowerCase())}>
+            <button onClick={() => filterProducts(category.name.toLowerCase())}>
               {category.name}
             </button>
           </li>
@@ -75,7 +90,7 @@ const SidebarFilter = () => {
         </Disclosure>
       ))}
       <p>
-        <button onClick={() => setFilter('')}>Clear all filters</button>
+        <button onClick={() => clearFilters()}>Clear all filters</button>
       </p>
     </form>
   )

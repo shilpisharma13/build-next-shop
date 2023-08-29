@@ -6,7 +6,7 @@ export const sortOptions = [
   { name: 'Price: High to Low', href: '#', current: false },
 ]
 export const subCategories = [
-  { name: 'Totes', href: '#' },
+  { name: 'Clothing', href: '#' },
   { name: 'Backpacks', href: '#' },
   { name: 'Travel Bags', href: '#' },
   { name: 'Hip Bags', href: '#' },

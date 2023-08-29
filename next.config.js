@@ -7,6 +7,7 @@ const nextConfig = {
   images: {
     domains: ['cdn.shopify.com', 'tailwindui.com'],
   },
+  reactStrictMode: false,
   // async rewrites() {
   //   return [
   //     {

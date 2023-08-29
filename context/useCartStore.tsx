@@ -1,5 +1,4 @@
 import { VariantOptions } from '@/components/ProductForm'
-import { Product } from '@/lib/createProductSlice'
 import {
   addLineToCart,
   createCart,
@@ -137,8 +136,7 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: 'cart_shopify',
-      // getStorage: () => localStorage,
-      // storage: createJSONStorage(() => sessionStorage),
+     
     }
   )
 )

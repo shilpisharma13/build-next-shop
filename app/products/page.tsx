@@ -1,9 +1,7 @@
 import Sort from '@/components/Sort'
 import { getProducts } from '../../utils/shopify/productQueries.js'
 import SidebarFilter from '@/components/SidebarFilter'
-import Products from '@/components/Products'
-import GridView from '@/components/GridView'
-import ListView from '@/components/ListView'
+import AllProducts from '@/components/AllProducts'
 
 export default async function Page() {
   const response = await getProducts()
@@ -29,7 +27,7 @@ export default async function Page() {
             <SidebarFilter />
           </div>
           <div className='col-span-4'>
-            <Products products={initialData} />
+            <AllProducts products={initialData}/>
           </div>
         </div>
       </main>

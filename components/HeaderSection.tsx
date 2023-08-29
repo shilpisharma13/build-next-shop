@@ -18,16 +18,17 @@ import {
   PlayCircleIcon,
 } from '@heroicons/react/20/solid'
 import Image from 'next/image'
-import { useShopContext } from '../context/shopContext'
+
 import MiniCart from '../components/MiniCart'
 import { Product, Variant } from '@/lib/createProductSlice'
 import { useCartStore } from '@/context/useCartStore'
 import useStore from '@/context/useStore'
+import { useProductStore } from '@/context/useProductStore'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const miniCart = useStore(useCartStore, (state) => state.miniCart)
-  
+
   const [toggleCart] = useCartStore((state) => [state.toggleCart])
 
   let totalQuantity = 0
