@@ -2,27 +2,19 @@
 
 import { Disclosure } from '@headlessui/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
-import { subCategories, filters } from '../utils/filter'
+import { subCategories, filters, filterHandles } from '../utils/filter'
 import { useProductStore } from '@/context/useProductStore'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getProducts } from '@/utils/shopify/productQueries.js'
+import useStore from '@/context/useStore'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 const SidebarFilter = () => {
   const clearFilters = useProductStore((state) => state.clearFilters)
-  // const { data } = useQuery({
-  //   queryKey: ['products'],
-  //   queryFn: async () => {
-  //     const response = await getProducts()
-  //     console.log(response)
-  //     return response
-  //   },
-
-  //   onSuccess: loadProducts,
-  // })
+  const filter = useStore(useProductStore, (state) => state.filter)
 
   const filterProducts = useProductStore((state) => state.filterProducts)
   return (
@@ -32,10 +24,10 @@ const SidebarFilter = () => {
         role='list'
         className='space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900'
       >
-        {subCategories.map((category) => (
-          <li key={category.name}>
-            <button onClick={() => filterProducts(category.name.toLowerCase())}>
-              {category.name}
+        {filterHandles.map((fHandle) => (
+          <li key={fHandle.name}>
+            <button onClick={() => filterProducts(fHandle.name.toLowerCase())}>
+              {fHandle.name}
             </button>
           </li>
         ))}
@@ -90,7 +82,16 @@ const SidebarFilter = () => {
         </Disclosure>
       ))}
       <p>
-        <button onClick={() => clearFilters()}>Clear all filters</button>
+        {filter === true ? (
+          <button
+            className='mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+            onClick={() => clearFilters()}
+          >
+            Clear all filters
+          </button>
+        ) : (
+          ''
+        )}
       </p>
     </form>
   )

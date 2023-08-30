@@ -5,14 +5,22 @@ export const sortOptions = [
   { name: 'Price: Low to High', href: '#', current: false },
   { name: 'Price: High to Low', href: '#', current: false },
 ]
-export const subCategories = [
-  { name: 'Clothing', href: '#' },
-  { name: 'Backpacks', href: '#' },
-  { name: 'Travel Bags', href: '#' },
-  { name: 'Hip Bags', href: '#' },
-  { name: 'Shoes', href: '#' },
+export const filterHandles = [
+  { name: 'Men', href: '#' },
+  { name: 'Women', href: '#' },
+  { name: 'Kids', href: '#' },
+  { name: 'Sale', href: '#' },
 ]
 export const filters = [
+  {
+    id: 'category',
+    name: 'Category',
+    options: [
+      { value: 'Clothing', label: 'Clothing', checked: false },
+      { value: 'Backpacks', label: 'Backpacks', checked: false },
+      { value: 'Shoes', label: 'Shoes', checked: true },
+    ],
+  },
   {
     id: 'color',
     name: 'Color',
@@ -25,17 +33,7 @@ export const filters = [
       { value: 'purple', label: 'Purple', checked: false },
     ],
   },
-  {
-    id: 'category',
-    name: 'Category',
-    options: [
-      { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-      { value: 'sale', label: 'Sale', checked: false },
-      { value: 'travel', label: 'Travel', checked: true },
-      { value: 'organization', label: 'Organization', checked: false },
-      { value: 'accessories', label: 'Accessories', checked: false },
-    ],
-  },
+
   {
     id: 'size',
     name: 'Size',
@@ -46,6 +44,20 @@ export const filters = [
       { value: '18l', label: '18L', checked: false },
       { value: '20l', label: '20L', checked: false },
       { value: '40l', label: '40L', checked: true },
+    ],
+  },
+  {
+    id: 'brand',
+    name: 'Brand',
+    options: [
+      { value: 'VANS', label: 'VANS', checked: false },
+      { value: 'ADIDAS', label: 'ADIDAS', checked: false },
+      { value: 'NIKE', label: 'NIKE', checked: false },
+      { value: 'SUPRA', label: 'SUPRA', checked: false },
+      { value: 'PUMA', label: 'PUMA', checked: false },
+      { value: 'TIMEBERLAND', label: 'TIMEBERLAND', checked: false },
+      { value: 'CONVERSE', label: 'CONVERSE', checked: false },
+      { value: 'DR MARTENS', label: 'DR MARTENS', checked: false },
     ],
   },
 ]
