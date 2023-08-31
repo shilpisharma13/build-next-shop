@@ -11,14 +11,14 @@ export const filterHandles = [
   { name: 'Kids', href: '#' },
   { name: 'Sale', href: '#' },
 ]
-export const filters = [
+export const Tfilters = [
   {
     id: 'category',
     name: 'Category',
     options: [
       { value: 'Clothing', label: 'Clothing', checked: false },
       { value: 'Backpacks', label: 'Backpacks', checked: false },
-      { value: 'Shoes', label: 'Shoes', checked: true },
+      { value: 'Shoes', label: 'Shoes', checked: false },
     ],
   },
   {
@@ -27,7 +27,7 @@ export const filters = [
     options: [
       { value: 'white', label: 'White', checked: false },
       { value: 'beige', label: 'Beige', checked: false },
-      { value: 'blue', label: 'Blue', checked: true },
+      { value: 'blue', label: 'Blue', checked: false },
       { value: 'brown', label: 'Brown', checked: false },
       { value: 'green', label: 'Green', checked: false },
       { value: 'purple', label: 'Purple', checked: false },
@@ -38,12 +38,12 @@ export const filters = [
     id: 'size',
     name: 'Size',
     options: [
-      { value: '2l', label: '2L', checked: false },
-      { value: '6l', label: '6L', checked: false },
-      { value: '12l', label: '12L', checked: false },
-      { value: '18l', label: '18L', checked: false },
-      { value: '20l', label: '20L', checked: false },
-      { value: '40l', label: '40L', checked: true },
+      { value: '4', label: '4', checked: false },
+      { value: '5', label: '5', checked: false },
+      { value: '6', label: '6', checked: false },
+      { value: '7', label: '7', checked: false },
+      { value: '8', label: '8', checked: false },
+      { value: '9', label: '9', checked: false },
     ],
   },
   {

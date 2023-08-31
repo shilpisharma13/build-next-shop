@@ -2,7 +2,7 @@
 
 import { Disclosure } from '@headlessui/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
-import { subCategories, filters, filterHandles } from '../utils/filter'
+import { subCategories, Tfilters, filterHandles } from '../utils/filter'
 import { useProductStore } from '@/context/useProductStore'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -14,26 +14,38 @@ function classNames(...classes: string[]) {
 }
 const SidebarFilter = () => {
   const clearFilters = useProductStore((state) => state.clearFilters)
-  const filter = useStore(useProductStore, (state) => state.filter)
 
-  const filterProducts = useProductStore((state) => state.filterProducts)
+  const filters = useProductStore((state) => state.filters)
+  const updateFilters = useProductStore((state) => state.updateFilters)
   return (
-    <form className='hidden lg:block'>
-      <h3 className='sr-only'>Categories</h3>
+    <form className='hidden lg:block' onSubmit={(e) => e.preventDefault()}>
+      <input
+        type='text'
+        name='text'
+        placeholder='search'
+        value={filters.text}
+        onChange={updateFilters}
+      />
+
       <ul
         role='list'
-        className='space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900'
+        className='space-y-4 border-b border-gray-200 pb-6 text-sm font-medium'
       >
         {filterHandles.map((fHandle) => (
           <li key={fHandle.name}>
-            <button onClick={() => filterProducts(fHandle.name.toLowerCase())}>
+            <button
+              type='button'
+              name='type'
+              onClick={updateFilters}
+              className='text-gray-700 hover:text-gray-200 active:text-gray-900 active:text-lg'
+            >
               {fHandle.name}
             </button>
           </li>
         ))}
       </ul>
 
-      {filters.map((section) => (
+      {Tfilters.map((section) => (
         <Disclosure
           as='div'
           key={section.id}
@@ -60,15 +72,17 @@ const SidebarFilter = () => {
                   {section.options.map((option, optionIdx) => (
                     <div key={option.value} className='flex items-center'>
                       <input
-                        id={`filter-${section.id}-${optionIdx}`}
-                        name={`${section.id}[]`}
-                        defaultValue={option.value}
+                        id={section.id}
+                        name={section.id}
+                        // defaultValue={option.value}
                         type='checkbox'
-                        defaultChecked={option.checked}
                         className='h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500'
+                        value={option.value}
+                        onChange={updateFilters}
+                       
                       />
                       <label
-                        htmlFor={`filter-${section.id}-${optionIdx}`}
+                        htmlFor={section.id}
                         className='ml-3 text-sm text-gray-600'
                       >
                         {option.label}
@@ -82,16 +96,12 @@ const SidebarFilter = () => {
         </Disclosure>
       ))}
       <p>
-        {filter === true ? (
-          <button
-            className='mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
-            onClick={() => clearFilters()}
-          >
-            Clear all filters
-          </button>
-        ) : (
-          ''
-        )}
+        <button
+          className='mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+          onClick={() => clearFilters()}
+        >
+          Clear all filters
+        </button>
       </p>
     </form>
   )

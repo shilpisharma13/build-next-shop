@@ -124,7 +124,7 @@ export const getProductsByMultipleOptions = async (handle) => {
     }
   `
 
-  const variables = { handle: handle, brand: '' }
+  const variables = { handle: handle, brand: 'ADIDAS' }
 
   try {
     console.log('hello')

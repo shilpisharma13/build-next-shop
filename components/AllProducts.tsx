@@ -1,22 +1,36 @@
 'use client'
 
-import { getProducts } from '@/utils/shopify/productQueries.js'
 import ProductsPage from './ProductsPage'
-import { useQuery } from '@tanstack/react-query'
+
 import { useProductStore } from '@/context/useProductStore'
-import { useEffect } from 'react'
+
 import useStore from '@/context/useStore'
+import { useEffect } from 'react'
 
 interface Props {
   products: []
 }
 
 const AllProducts = ({ products }: Props) => {
-  const filteredProducts = useProductStore((state) => state.filteredProducts)
+  const [filteredProducts, loadProducts, filters, filterProducts] =
+    useProductStore((state) => [
+      state.filteredProducts,
+      state.loadProducts,
+      state.filters,
+      state.filterProducts,
+    ])
 
   const filter = useStore(useProductStore, (state) => state.filter)
 
-  if (filter === false) return <ProductsPage products={products} />
-  if (filter === true) return <ProductsPage products={filteredProducts} />
+  useEffect(() => {
+    loadProducts()
+  }, [filter])
+
+  useEffect(() => {
+    filterProducts()
+  }, [filters])
+  return <ProductsPage products={filteredProducts} />
+  // if (filter === false) return <ProductsPage products={products} />
+  // if (filter === true) return <ProductsPage products={filteredProducts} />
 }
 export default AllProducts

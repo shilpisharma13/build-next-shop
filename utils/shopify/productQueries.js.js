@@ -4,12 +4,19 @@ import { graphQLClient } from '../helpers'
 export async function getProducts() {
   const getAllProductsQuery = gql`
     {
-      products(first: 25) {
+      products(first: 150) {
         edges {
           node {
             id
             title
             handle
+            vendor
+            tags
+            productType
+            options {
+              name
+              values
+            }
             priceRange {
               minVariantPrice {
                 amount
