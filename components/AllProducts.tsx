@@ -12,15 +12,17 @@ interface Props {
 }
 
 const AllProducts = ({ products }: Props) => {
-  const [filteredProducts, loadProducts, filters, filterProducts] =
+  const [filteredProducts, loadProducts, filterProducts, sortProducts] =
     useProductStore((state) => [
       state.filteredProducts,
       state.loadProducts,
-      state.filters,
       state.filterProducts,
+      state.sortProducts,
     ])
 
   const filter = useStore(useProductStore, (state) => state.filter)
+  const filters = useStore(useProductStore, (state) => state.filters)
+  const sort = useStore(useProductStore, (state) => state.sort)
 
   useEffect(() => {
     loadProducts()
@@ -28,7 +30,13 @@ const AllProducts = ({ products }: Props) => {
 
   useEffect(() => {
     filterProducts()
-  }, [filters])
+    sortProducts()
+  }, [filters, sort, filter])
+
+  // useEffect(() => {
+  //   sortProducts()
+  // }, [sort])
+
   return <ProductsPage products={filteredProducts} />
   // if (filter === false) return <ProductsPage products={products} />
   // if (filter === true) return <ProductsPage products={filteredProducts} />

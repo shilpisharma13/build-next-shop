@@ -6,13 +6,19 @@ import {
 import { create } from 'zustand'
 import { Product, ProductSlice } from '@/lib/createProductSlice'
 import { persist } from 'zustand/middleware'
-import { ChangeEvent, MouseEventHandler } from 'react'
+import {
+  ButtonHTMLAttributes,
+  ChangeEvent,
+  FormEvent,
+  MouseEventHandler,
+} from 'react'
 
 interface ProductStore {
   allProducts: ProductSlice[]
   filteredProducts: ProductSlice[]
   gridView: boolean
   filter: boolean
+  sort: string
   filters: {
     text: string
     type: string
@@ -24,6 +30,8 @@ interface ProductStore {
   loadProducts: () => void
   updateFilters: (e: ChangeEvent) => void
   filterProducts: () => void
+  updateSort: (e: FormEvent) => void
+  sortProducts: () => void
   clearFilters: () => void
   setGridView: () => void
   setListView: () => void
@@ -35,6 +43,7 @@ export const useProductStore = create<ProductStore>()(
       allProducts: [],
       filteredProducts: [],
       filter: false,
+      sort: '',
       filters: {
         text: '',
         type: '',
@@ -48,6 +57,8 @@ export const useProductStore = create<ProductStore>()(
         set({
           allProducts: response.products.edges,
           filteredProducts: response.products.edges,
+          sort: '',
+          filter: false,
         })
       },
       updateFilters: (e) => {
@@ -57,6 +68,14 @@ export const useProductStore = create<ProductStore>()(
         let value = e.target?.value
         let checked = e.target.checked
         console.log(name, value, checked)
+        if (name === 'text') {
+          return set({
+            filters: {
+              ...tempFilters,
+              [name]: value,
+            },
+          })
+        }
         if (name === 'type') {
           value = e.target.textContent
           set({
@@ -133,11 +152,69 @@ export const useProductStore = create<ProductStore>()(
         //   })
         //   tempProducts = arr.flat()
         // }
-        console.log(tempProducts)
+
         set({
           filteredProducts: [...tempProducts],
         })
-        console.log(get().filters)
+      },
+      updateSort: (e) => {
+        let sortValue = e?.target?.value
+        if (sortValue === 'mp') {
+          set({
+            sort: 'Most Popular',
+          })
+        }
+        if (sortValue === 'newest') {
+          set({
+            sort: 'New Arrivals',
+          })
+        }
+        if (sortValue === 'sale') {
+          set({
+            sort: 'Sale',
+          })
+        }
+
+        if (sortValue === 'lth') {
+          set({
+            sort: 'Price (Low to High)',
+          })
+        }
+        if (sortValue === 'htl') {
+          set({
+            sort: 'Price (High to Low)',
+          })
+        }
+      },
+      sortProducts: () => {
+        const filteredProducts = get().filteredProducts
+        const sortValue = get().sort
+        let tempProducts = [...filteredProducts]
+        console.log(sortValue)
+        if (sortValue === 'mp') {
+        }
+        if (sortValue === 'newest') {
+        }
+        if (sortValue === 'sale') {
+        }
+
+        if (sortValue === 'Price (Low to High)') {
+          tempProducts = tempProducts.sort(
+            (a, b) =>
+              parseInt(a.node.priceRange.minVariantPrice.amount) -
+              parseInt(b.node.priceRange.minVariantPrice.amount)
+          )
+        }
+        if (sortValue === 'Price (High to Low)') {
+          tempProducts = tempProducts.sort(
+            (a, b) =>
+              parseInt(b.node.priceRange.minVariantPrice.amount) -
+              parseInt(a.node.priceRange.minVariantPrice.amount)
+          )
+        }
+        set({
+          filteredProducts: [...tempProducts],
+        })
       },
       clearFilters: () => {
         set({

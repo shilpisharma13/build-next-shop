@@ -1,15 +1,15 @@
 export const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Sale', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false },
-  { name: 'Price: Low to High', href: '#', current: false },
-  { name: 'Price: High to Low', href: '#', current: false },
+  { name: 'mp', label: 'Most Popular', current: false },
+  { name: 'sale', label: 'Sale', current: false },
+  { name: 'newest', label: 'New Arrivals', current: false },
+  { name: 'lth', label: 'Price: Low to High', current: false },
+  { name: 'htl', label: 'Price: High to Low', current: false },
 ]
 export const filterHandles = [
-  { name: 'Men', href: '#' },
-  { name: 'Women', href: '#' },
-  { name: 'Kids', href: '#' },
-  { name: 'Sale', href: '#' },
+  { name: 'Men' },
+  { name: 'Women' },
+  { name: 'Kids' },
+  { name: 'Sale' },
 ]
 export const Tfilters = [
   {

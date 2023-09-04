@@ -2,35 +2,37 @@
 
 import { Fragment, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-
 import {
   ChevronDownIcon,
   FunnelIcon,
   ListBulletIcon,
   Squares2X2Icon,
 } from '@heroicons/react/20/solid'
-
 import { sortOptions } from '../utils/filter'
-import GridView from './GridView'
-import ListView from './ListView'
 import { useProductStore } from '@/context/useProductStore'
+import useStore from '@/context/useStore'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 const Sort = () => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [setGridView, setListView, gridView] = useProductStore((state) => [
-    state.setGridView,
-    state.setListView,
-    state.gridView,
-  ])
+
+  const sort = useStore(useProductStore, (state) => state.sort)
+  const [setGridView, setListView, gridView, updateSort] = useProductStore(
+    (state) => [
+      state.setGridView,
+      state.setListView,
+      state.gridView,
+      state.updateSort,
+    ]
+  )
   return (
     <div className='flex items-center'>
       <Menu as='div' className='relative inline-block text-left'>
         <div>
           <Menu.Button className='group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900'>
-            Sort
+            Sort by : {sort}
             <ChevronDownIcon
               className='-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500'
               aria-hidden='true'
@@ -52,8 +54,10 @@ const Sort = () => {
               {sortOptions.map((option) => (
                 <Menu.Item key={option.name}>
                   {({ active }) => (
-                    <a
-                      href={option.href}
+                    <button
+                      name={option.name}
+                      value={option.name}
+                      onClick={updateSort}
                       className={classNames(
                         option.current
                           ? 'font-medium text-gray-900'
@@ -62,8 +66,8 @@ const Sort = () => {
                         'block px-4 py-2 text-sm'
                       )}
                     >
-                      {option.name}
-                    </a>
+                      {option.label}
+                    </button>
                   )}
                 </Menu.Item>
               ))}
