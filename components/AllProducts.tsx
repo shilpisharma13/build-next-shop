@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import ProductsPage from './ProductsPage'
+import ProductsPage from "./ProductsPage";
 
-import { useProductStore } from '@/context/useProductStore'
+import { useProductStore } from "@/context/useProductStore";
 
-import useStore from '@/context/useStore'
-import { useEffect } from 'react'
+import useStore from "@/context/useStore";
+import { useEffect } from "react";
 
 interface Props {
-  products: []
+  products: [];
 }
 
 const AllProducts = ({ products }: Props) => {
@@ -18,27 +18,27 @@ const AllProducts = ({ products }: Props) => {
       state.loadProducts,
       state.filterProducts,
       state.sortProducts,
-    ])
+    ]);
 
-  const filter = useStore(useProductStore, (state) => state.filter)
-  const filters = useStore(useProductStore, (state) => state.filters)
-  const sort = useStore(useProductStore, (state) => state.sort)
-
-  useEffect(() => {
-    loadProducts()
-  }, [filter])
+  const filter = useStore(useProductStore, (state) => state.filter);
+  const filters = useStore(useProductStore, (state) => state.filters);
+  const sort = useStore(useProductStore, (state) => state.sort);
 
   useEffect(() => {
-    filterProducts()
-    sortProducts()
-  }, [filters, sort, filter])
+    loadProducts();
+  }, [filter]);
+
+  useEffect(() => {
+    filterProducts();
+    sortProducts();
+  }, [filters, sort, filter]);
 
   // useEffect(() => {
   //   sortProducts()
   // }, [sort])
 
-  return <ProductsPage products={filteredProducts} />
+  return <ProductsPage products={filteredProducts} />;
   // if (filter === false) return <ProductsPage products={products} />
   // if (filter === true) return <ProductsPage products={filteredProducts} />
-}
-export default AllProducts
+};
+export default AllProducts;
